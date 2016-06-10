@@ -2,7 +2,7 @@
 <html lang="en-us">
     <head>
         <meta charset="UTF-8">
-            <title>Taipei-mrt-viz by missmoss</title>
+            <title>Taipei MRT Flow by missmoss</title>
             <style>
                 #map{ width: 100%; height: 800px; float: left;}
                 </style>
@@ -97,11 +97,8 @@
                         d.LatLng = new L.LatLng(d.lat, d.lon);
                         });
                         
-                        var totalExtent = d3.extent(data, function(d) {
-                        return d.flow;
-                        });
                         
-                        var radScale = d3.scale.sqrt().domain(totalExtent).rangeRound([3,10]);
+                        var radScale = d3.scale.sqrt().domain([10,3000]).rangeRound([3,12]);
                         
                         var legend = [10, 100, 1000, 10000];
                         
