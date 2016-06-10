@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<<<<<<< HEAD
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
@@ -55,3 +56,193 @@
   
   </body>
 </html>
+=======
+<head>
+    <meta charset="utf-8">
+        <title>Taipei MRT Station Flows</title>
+        <style>
+            html, body {
+                margin: 0;
+                text-align: center;
+            }
+        #container {
+            position: relative;
+            margin: 0 auto;
+            width: 1180px;
+            text-align: left;
+        }
+        #map{ width: 680px; height: 800px; float: left;}
+        </style>
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+        <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+        <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        </head>
+<body>
+    <div id="container">
+        <div>
+            <p style="font-weight: bold" align="center"> Taipei MRT Station Flows </p>
+        </div>
+        <div id="mapnwc">
+            <div id="map"></div>
+        </div>
+        
+        <script>
+            /* Set up Leaflet.js map */
+            var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+                subdomain: 'abcd'
+                });
+        
+        var map = L.map('map', {
+            scrollWheelZoom: true,
+            center: [25.0600789,121.5171921],
+            zoom: 12,
+            zoomControl: false
+            });
+        
+        L.control.zoom({
+            position:'topright'
+            }).addTo(map);
+        
+        map.addLayer(layer);
+        
+        /* Initialize the SVG layer */
+        map._initPathRoot()
+        
+        /* Set up svg and some elements for charts */
+        
+        /* svg1 for Heatmap */
+        /* We simply pick up the SVG from the map object */
+        var svg1 = d3.select("#map").select("svg"),
+        g = svg1.append("g");
+        
+        var clock = g.append("text")
+        .attr("fill", "black")
+        .attr("x", 30)
+        .attr("y", 50)
+        .style("font-size", 32)
+        .text("00:00");
+        
+        
+        /* Load data, process and draw functions */
+        d3.csv("mrtflow_Nov2_2015.csv", function(data) {
+            
+            data.forEach(function(d) {
+                d.LatLng = new L.LatLng(d.lat, d.lon);
+            });
+            
+            var totalExtent = d3.extent(data, function(d) {
+                return d.flow;
+            });
+            
+            var i = 0;
+            setInterval(function() {
+                if (i > 20) {
+                    i = 0;
+                }
+                
+                if (i < 19) {
+                    var h = i + 5;
+                }
+                else {
+                    var h = i - 19;
+                }
+                
+                var h1 = parseInt(h / 10),h2 = h % 10;
+                
+                clock.text(h1+""+ h2+":00")
+                .transition()
+                .duration(50);
+                
+                d3.selectAll("#hour")
+                .remove();
+                draw(h);
+                
+                i++;
+            }, 1000);
+
+function draw(h) {
+    
+    hData = data.filter(function(d) {
+        return d.hour == h;
+    })
+        
+                function color(input) {
+                    if (input === "in") {
+                        return "#FFE11A";
+                    }
+                    else if (input === "out") {
+                        return "#5bc0de";
+                    }
+                    else {
+                        return "steelblue";
+                    }
+                }
+                
+                var div = d3.select("#map").append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+                
+                var radScale = d3.scale.sqrt().domain(totalExtent).rangeRound([3,10]);
+                
+                var canvas = g.selectAll("circle")
+                .data(hData)
+                .enter();
+                
+                var feature = canvas.append("circle")
+                .style("opacity", .6)
+                .attr("fill", function(d) {return color(d.direction);})
+                .attr("r", function(d) {return radScale(d.flow); })
+                .attr("class", "circle")
+                .attr("click", "off")
+                .attr("id", "hour");
+                
+                map.on("viewreset", updateMap);
+                updateMap();
+                
+                function updateMap() {
+                    feature.attr("transform",
+                        function(d) {
+                            d.x = map.latLngToLayerPoint(d.LatLng).x;
+                            d.y = map.latLngToLayerPoint(d.LatLng).y;
+                            return "translate("+
+                            map.latLngToLayerPoint(d.LatLng).x +","+
+                            map.latLngToLayerPoint(d.LatLng).y +")";
+                        }
+                    )};
+                
+}// end of draw(h)
+            
+            /*
+            function updateAll(newData, attribute) {
+            } // end of updateAll
+            */
+        }) // end of d3.csv("aggregate.csv", function(d) { } )
+        
+        
+        // MTB: http://vallnordworldchampionships.com/
+        // Storia: http://visitandorra.com/
+        // Viota: http://www.voltaalsports.com/
+        // Vuelta: http://www.torrevieja.com/
+        // Alpine: http://www.grandvalira.com
+            </script>
+        
+        <div id="cp">
+            <div id="cptext">
+                <h4>DATA SOURCE</h4>
+                Taipei MRT Station Flows: <a href="http://data.taipei/">Open Data Taipei</a></br>
+                Taipei MRT Station Locations: repeat/<a href="https://github.com/repeat/taipei-metro-stations">taipei-metro-stations</a>
+                <h4>INSPIRED BY</h4>
+                Oliver O'Brien <a href="https://youtu.be/QQV3UHsZ_u4">Oyster Card Touch Ins & Touch Outs (Map Animation)</a></br>
+                 Ira Winder <a href="http://cp.media.mit.edu/city-simulation/">Urban Intervention Simulation</a></br>
+                 Mike Barry and Brian Card <a href="http://mbtaviz.github.io/">Visualizing MBTA Data</a></br>
+                <p>2016 | Claire Tsao</p>
+            </div>
+                </div>
+</body>
+</html>
+>>>>>>> master
