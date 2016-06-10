@@ -21,7 +21,7 @@
   </head>
   <body>
     <section class="page-header">
-      <h1 class="project-name">Taipei MRT Flow</h1>
+      <h1 class="project-name">Taipei MRT Flows</h1>
       <h2 class="project-tagline">台北捷運一日進出站流量</h2>
       <a href="https://github.com/missmoss/taipei-mrt-viz" class="btn">View on GitHub</a>
       <a href="https://github.com/missmoss/taipei-mrt-viz/zipball/master" class="btn">Download .zip</a>
@@ -37,8 +37,8 @@
 <p>This is </p>
 
 <h3>Data Source</h3>
-Taipei MRT Station Flow: <a href="http://data.taipei/">Open Data Taipei</a></br>
-Taipei MRT Station Location: <a href="https://github.com/repeat" class="user-mention">@repeat</a>/<a href="https://github.com/repeat/taipei-metro-stations">taipei-metro-stations</a>
+Taipei MRT Station Flows: <a href="http://data.taipei/">Open Data Taipei</a></br>
+Taipei MRT Station Locations: <a href="https://github.com/repeat" class="user-mention">@repeat</a>/<a href="https://github.com/repeat/taipei-metro-stations">taipei-metro-stations</a>
 <h3>Inspired By</h3>
 Oliver O'Brien <a href="https://youtu.be/QQV3UHsZ_u4">Oyster Card Touch Ins & Touch Outs (Map Animation)</a></br>
 Ira Winder <a href="http://cp.media.mit.edu/city-simulation/">Urban Intervention Simulation</a></br>
@@ -101,67 +101,6 @@ Mike Barry and Brian Card <a href="http://mbtaviz.github.io/">Visualizing MBTA D
                 return d.flow;
             });
             
-            var radScale = d3.scale.sqrt().domain(totalExtent).rangeRound([3,10]);
-            
-            var legend = [10, 100, 1000, 10000];
-            
-            svg1.append("rect")
-            .attr("x", 750)
-            .attr("y", 700)
-            .attr("height", 80)
-            .attr("width", 250)
-            .attr("fill", "#6C6C6C")
-            .style("opacity", 0.2);
-            
-            svg1.append("text")
-            .attr("x", 755)
-            .attr("y", 712)
-            .attr("fill", "#6C6C6C")
-            .style("font-size", 14)
-            .text("Legend");
-
-            svg1.append("circle")
-            .attr("cx", 765)
-            .attr("cy", 728)
-            .attr("r", 5)
-            .attr("fill", "#FFE11A")
-            .style("opacity", 0.7);
-
-            svg1.append("text")
-            .attr("x", 780)
-            .attr("y", 732)
-            .text("In 進站");
-
-            svg1.append("circle")
-            .attr("cx", 830)
-            .attr("cy", 728)
-            .attr("r", 5)
-            .attr("fill", "#5bc0de")
-            .style("opacity", 0.7);
-
-            svg1.append("text")
-            .attr("x", 845)
-            .attr("y", 732)
-            .text("Out 出站");
-            
-            svg1.selectAll(".legend")
-            .data(legend)
-            .enter()
-            .append("circle")
-            .attr("cx", function(d,i) { return 758+i*40+radScale(d-1)*2;})
-            .attr("cy", 750)
-            .attr("r", function(d) { return radScale(d);} )
-            .attr("fill", "#5bc0de")
-            .style("opacity", 0.7);
-            
-            svg1.selectAll(".legendtext")
-            .data(legend)
-            .enter()
-            .append("text")
-            .attr("x", function(d,i) { return 758+i*40+radScale(d-1)*2+radScale(d)+5;})
-            .attr("y", 755)
-            .text(function(d) { return d;});
-
             var i = 0;
             setInterval(function() {
                 if (i > 20) {
@@ -209,6 +148,8 @@ function draw(h) {
                 var div = d3.select("#map").append("div")
                 .attr("class", "tooltip")
                 .style("opacity", 0);
+                
+                var radScale = d3.scale.sqrt().domain(totalExtent).rangeRound([3,10]);
                 
                 var canvas = g.selectAll("circle")
                 .data(hData)
