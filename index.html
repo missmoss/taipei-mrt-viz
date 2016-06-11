@@ -8,7 +8,7 @@
                 </style>
             <meta name="viewport" content="width=device-width, initial-scale=1">
                 <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-                    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+                    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' 'type='text/css'>
                         <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
                         <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
                         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
@@ -19,13 +19,11 @@
                         <script src="http://d3js.org/d3.v3.min.js"></script>
                         <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
                         </head>
-                        <body>
+                        
+            <body>
                         <section class="page-header">
-                        <h1 class="project-name">Taipei MRT Flow</h1>
+                        <h1 class="project-name">Taipei Metro Flow</h1>
                         <h2 class="project-tagline">台北捷運一日進出站流量</h2>
-                        <a href="https://github.com/missmoss/taipei-mrt-viz" class="btn">View on GitHub</a>
-                        <a href="https://github.com/missmoss/taipei-mrt-viz/zipball/master" class="btn">Download .zip</a>
-                        <a href="https://github.com/missmoss/taipei-mrt-viz/tarball/master" class="btn">Download .tar.gz</a>
                         </section>
                         
                         
@@ -34,13 +32,13 @@
                         
                         <h3>Project Description</h3>
                         
-                        <p>This is </p>
-                        
+                        <p>This is a visualization of Taipei Metro flow in and out of each station by hour in a usual November weekday. </p>
+                        <p>From 05:00 to 07:00 we can see passengers entered peripheral stations and exited from stations in the center area of the city. Taipei Main Staion, as the transit center of all kinds of transportation, is always the largest circle on the map.</p>
                         <h3>Data Source</h3>
                         Taipei MRT Station Flow: <a href="http://data.taipei/">Open Data Taipei</a></br>
                         Taipei MRT Station Location: <a href="https://github.com/repeat" class="user-mention">@repeat</a>/<a href="https://github.com/repeat/taipei-metro-stations">taipei-metro-stations</a>
                         <h3>Inspired By</h3>
-                        Oliver O'Brien <a href="https://youtu.be/QQV3UHsZ_u4">Oyster Card Touch Ins & Touch Outs (Map Animation)</a></br>
+                        Oliver O'Brien <a href="https://youtu.be/QQV3UHsZ_u4">Oyster Card Touch Ins and Touch Outs (Map Animation)</a></br>
                         Ira Winder <a href="http://cp.media.mit.edu/city-simulation/">Urban Intervention Simulation</a></br>
                         Mike Barry and Brian Card <a href="http://mbtaviz.github.io/">Visualizing MBTA Data</a>
                         
@@ -54,21 +52,18 @@
                         
                         <script>
                         /* Set up Leaflet.js map */
+                        
                         var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
                         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
                         subdomain: 'abcd'
                         });
                         
                         var map = L.map('map', {
-                        scrollWheelZoom: true,
+                        scrollWheelZoom: false,
                         center: [25.0600789,121.5171921],
                         zoom: 12,
                         zoomControl: false
                         });
-                        
-                        L.control.zoom({
-                        position:'topright'
-                        }).addTo(map);
                         
                         map.addLayer(layer);
                         
@@ -89,6 +84,96 @@
                         .style("font-size", 32)
                         .text("00:00");
                         
+                        d3.csv("taipei.csv", function(data) {
+                        
+                        var transform = d3.geo.transform({point: projectPoint}),
+                        d3path = d3.geo.path().projection(transform);
+                        
+                        function projectPoint(x, y) {
+                            var point = map.latLngToLayerPoint(new L.LatLng(x, y));
+                            this.stream.point(point.x, point.y);
+                        }
+                        
+                        var lines = {"1":{
+                            color: "brown",
+                            geoLineString: {
+                                type: "LineString",
+                                coordinates: []
+                                }},
+                            "2": {
+                            color: "red",
+                            geoLineString: {
+                                type: "LineString",
+                                coordinates: []
+                                }},
+                            "3": {
+                            color: "green",
+                            geoLineString: {
+                                type: "LineString",
+                                coordinates: []
+                                }},
+                            "4": {
+                            color: "orange",
+                            geoLineString: {
+                                type: "LineString",
+                                coordinates: []
+                                }},
+                            "4-1": {
+                                color: "orange",
+                                geoLineString: {
+                                    type: "LineString",
+                                    coordinates: []
+                                }},
+                            "5": {
+                            color: "blue",
+                            geoLineString: {
+                                type: "LineString",
+                                coordinates: []
+                                }},
+                            "n": {
+                            color: "red",
+                            geoLineString: {
+                                type: "LineString",
+                                coordinates: []
+                                }},
+                            "s": {
+                            color: "green",
+                            geoLineString: {
+                                type: "LineString",
+                                coordinates: []
+                                }}
+                            };
+                        
+                        data.forEach(function(d) {
+                            lines[d.line_no].geoLineString.coordinates.push(
+                            [parseFloat(d.lat), parseFloat(d.lon)]);
+                        });
+                        
+                        var keys = d3.keys(lines).filter(function(key, d) {
+                            return key;
+                        });
+                        
+                        var lines2 = [];
+                        
+                        keys.forEach(function(key) {
+                            var tmpdata = lines[key];
+                            tmpdata['line_no'] = key;
+                            lines2.push(tmpdata);
+                        });
+                        
+                        var linePath = g.selectAll(".lineConnect")
+                        .data(lines2)
+                        .enter()
+                        .append("path")
+                        .attr("class", "lineConnect")
+                        .attr("id", function(d) {return d.line_no; })
+                        .attr("stroke", function(d) { return d.color; })
+                        .attr("fill", "None")
+                        .style("opacity", 1)
+                        .attr("d", function(d) { return d3path(d.geoLineString); });
+                        
+                        
+                        }); //end of d3.csv("taipei.csv")
                         
                         /* Load data, process and draw functions */
                         d3.csv("mrtflow_Nov2_2015.csv", function(data) {
