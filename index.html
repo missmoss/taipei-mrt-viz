@@ -4,20 +4,27 @@
         <meta charset="UTF-8">
             <title>A Day in Taipei Metro</title>
             <style>
-                #map{ width: 100%; height: 95vh; float: left;}
+                #map{ width: 100%; height: 100vh;}
                 div.legend {
                     position: absolute;
                     text-align: left;
-                    width: 250px;
-                    height: 80px;
-                    left: 75%;
-                    top: 87%;
+                    width: 85px;
+                    height: 160px;
+                    right: 15%;
+                    top: 10px;
                     padding: 2px;
                     font: 12px sans-serif;
                     background: rgba(25,25,25,0.2);
                     border: 0px;      
                     border-radius: 8px;           
                     pointer-events: none;         
+                }
+                div.clock {
+                    position: absolute;
+                    text-align: left;
+                    left: 15%;
+                    top: 10px;
+                    border: 0px;
                 }
                 </style>
             <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -64,9 +71,9 @@
                     </div>
                         
                     <div class="section">
-                        <section class="main-content">
+                        
                         <div id="map"></div>
-                        </section>
+                        
                     </div>
                     <div class="section">
                         <section class="main-content">
@@ -123,13 +130,17 @@
                         var svg1 = d3.select("#map").select("svg"),
                         g = svg1.append("g");
                         
+                        var timediv = d3.select("#map").append("div")
+                        .attr("class", "clock")
+                        .append("svg");
+                        
                         var div = d3.select("#map").append("div")
                         .attr("class", "legend");
                         
-                        var clock = g.append("text")
+                        var clock = timediv.append("text")
                         .attr("fill", "#6C6C6C")
-                        .attr("x", 30)
-                        .attr("y", 50)
+                        .attr("x", 10)
+                        .attr("y", 40)
                         .style("font-size", 32)
                         .text("00:00");
                         
@@ -237,52 +248,45 @@
                         var legend = [10, 100, 1000, 10000];
                         
                         var padding = 10
-                        div = div.append("svg");
-                        //.html("<p font-size=14>Legend</p>");
                         
-                        /*
-                        div.append("rect")
-                        .attr("x", 750)
-                        .attr("y", 700)
-                        .attr("height", 80)
-                        .attr("width", 250)
-                        .attr("fill", "#6C6C6C")
-                        .style("opacity", 0.2);
-                        */
+                        div = div.append("svg");
+                        
                         div.append("text")
                         .attr("x", 5)
-                        .attr("y", 20)
+                        .attr("y", 18)
                         .attr("fill", "#6C6C6C")
                         .style("font-size", 14)
                         .text("Legend");
                         
                         div.append("circle")
-                        .attr("cx", 5)
-                        .attr("cy", 40)
+                        .attr("cx", 22)
+                        .attr("cy", 30)
                         .attr("r", 5)
                         .attr("fill", "#FFE11A")
                         .style("opacity", 0.7);
                         div.append("text")
-                        .attr("x", 25)
-                        .attr("y", 40)
-                        .text("entry 進站");
+                        .attr("x", 45)
+                        .attr("y", 35)
+                        .style("font-size", 12)
+                        .text("entry");
                         div.append("circle")
-                        .attr("cx", 839)
-                        .attr("cy", 728)
+                        .attr("cx", 22)
+                        .attr("cy", 45)
                         .attr("r", 5)
                         .attr("fill", "#5bc0de")
                         .style("opacity", 0.7);
                         div.append("text")
-                        .attr("x", 851)
-                        .attr("y", 732)
-                        .text("exit 出站");
+                        .attr("x", 45)
+                        .attr("y", 50)
+                        .style("font-size", 12)
+                        .text("exit");
                         
                         div.selectAll(".legend")
                         .data(legend)
                         .enter()
                         .append("circle")
-                        .attr("cx", function(d,i) { return 758+i*40+radScale(d-1)*2;})
-                        .attr("cy", 750)
+                        .attr("cx", 22)
+                        .attr("cy", function(d,i) { return 60+i*10+radScale(d-1)*2; })
                         .attr("r", function(d) { return radScale(d);} )
                         .attr("fill", "#5bc0de")
                         .style("opacity", 0.7);
@@ -292,8 +296,8 @@
                         .data(legend)
                         .enter()
                         .append("text")
-                        .attr("x", function(d,i) { return 758+i*40+radScale(d-1)*2+radScale(d)+5;})
-                        .attr("y", 755)
+                        .attr("x", 45)
+                        .attr("y", function(d,i) { return 67+i*10+radScale(d-1)*2;})
                         .text(function(d) { return d;});
                         var i = 0;
                         setInterval(function() {
