@@ -4,7 +4,21 @@
         <meta charset="UTF-8">
             <title>A Day in Taipei Metro</title>
             <style>
-                #map{ width: 100%; height: 800px; float: left;}
+                #map{ width: 100%; height: 95vh; float: left;}
+                div.legend {
+                    position: absolute;
+                    text-align: left;
+                    width: 250px;
+                    height: 80px;
+                    left: 75%;
+                    top: 87%;
+                    padding: 2px;
+                    font: 12px sans-serif;
+                    background: rgba(25,25,25,0.2);
+                    border: 0px;      
+                    border-radius: 8px;           
+                    pointer-events: none;         
+                }
                 </style>
             <meta name="viewport" content="width=device-width, initial-scale=1">
                 <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
@@ -12,12 +26,16 @@
                         <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
                         <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
                         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+                        <link rel="stylesheet" type="text/css" href="stylesheets/jquery.fullPage.css" />
                         <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
                         <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
                         <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
                         <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
                         <script src="http://d3js.org/d3.v3.min.js"></script>
                         <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+                        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+                        <script type="text/javascript" src="stylesheets/scrolloverflow.min.js"></script>
+                        <script type="text/javascript" src="stylesheets/jquery.fullPage.js"></script>
                         <script>
                             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                                 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -28,21 +46,38 @@
                         ga('send', 'pageview');
                         
                             </script>
+                        <script>
+                            $(document).ready(function() {
+                                $('#fullpage').fullpage();
+                                scrollOverflow: true;
+                            });
+                        </script>
                         </head>
                         
             <body>
+                <div id="fullpage">
+                    <div class="section">
                         <section class="page-header">
                         <h1 class="project-name">A Day in Taipei Metro</h1>
                         <h2 class="project-tagline">台北捷運一日進出站流量</h2>
                         </section>
+                    </div>
                         
-                        
+                    <div class="section">
                         <section class="main-content">
                         <div id="map"></div>
-                        
+                        </section>
+                    </div>
+                    <div class="section">
+                        <section class="main-content">
                         <h3>Project Description</h3>
                         <p>This is a visualization of entry and exit at each station in Taipei Metro by hour on Monday November 2nd, 2016. </p>
                         <p>From 05:00 to 07:00 we can see passengers entered peripheral stations and exited from stations in center area of the city from 08:00 to 09:00. At 17:00 passengers in center of the city started to enter stations, whreas exit numbers in these stations are still high. Taipei Main Staion, as the transit center of all kinds of transportation, is always the largest circle on the map.</p>
+                        
+                        </section>
+                        </div>
+                        <div class="section">
+                        <section class="main-content">
                         <h3>Data Source</h3>
                         Taipei Metro Flow: <a href="http://data.taipei/">Open Data Taipei</a></br>
                         Taipei Metro Station Information: <a href="https://github.com/repeat" class="user-mention">@repeat</a>/<a href="https://github.com/repeat/taipei-metro-stations">taipei-metro-stations</a>
@@ -50,14 +85,15 @@
                         Oliver O'Brien <a href="https://youtu.be/QQV3UHsZ_u4">Oyster Card Touch Ins and Touch Outs (Map Animation)</a></br>
                         Ira Winder <a href="http://cp.media.mit.edu/city-simulation/">Urban Intervention Simulation</a></br>
                         Mike Barry and Brian Card <a href="http://mbtaviz.github.io/">Visualizing MBTA Data</a>
-                        
                         <footer class="site-footer">
                         <span class="site-footer-owner"><a href="https://github.com/missmoss/taipei-mrt-viz">Taipei-mrt-viz</a> is maintained by <a href="https://github.com/missmoss">missmoss</a>.</span>
-                        
+                        <span class="site-footer-credits">The front photo is via courtesy of <a href="https://www.flickr.com/photos/lipon/11730442194/">liponan</a>.</span>
                         <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
                         </footer>
                         
                         </section>
+                        </div>
+                    </div>
                         
                         <script>
                         /* Set up Leaflet.js map */
@@ -86,6 +122,9 @@
                         /* We simply pick up the SVG from the map object */
                         var svg1 = d3.select("#map").select("svg"),
                         g = svg1.append("g");
+                        
+                        var div = d3.select("#map").append("div")
+                        .attr("class", "legend");
                         
                         var clock = g.append("text")
                         .attr("fill", "#6C6C6C")
@@ -197,42 +236,48 @@
                         
                         var legend = [10, 100, 1000, 10000];
                         
-                        svg1.append("rect")
+                        var padding = 10
+                        div = div.append("svg");
+                        //.html("<p font-size=14>Legend</p>");
+                        
+                        /*
+                        div.append("rect")
                         .attr("x", 750)
                         .attr("y", 700)
                         .attr("height", 80)
                         .attr("width", 250)
                         .attr("fill", "#6C6C6C")
                         .style("opacity", 0.2);
-                        
-                        svg1.append("text")
-                        .attr("x", 755)
-                        .attr("y", 712)
+                        */
+                        div.append("text")
+                        .attr("x", 5)
+                        .attr("y", 20)
                         .attr("fill", "#6C6C6C")
                         .style("font-size", 14)
                         .text("Legend");
-                        svg1.append("circle")
-                        .attr("cx", 763)
-                        .attr("cy", 728)
+                        
+                        div.append("circle")
+                        .attr("cx", 5)
+                        .attr("cy", 40)
                         .attr("r", 5)
                         .attr("fill", "#FFE11A")
                         .style("opacity", 0.7);
-                        svg1.append("text")
-                        .attr("x", 775)
-                        .attr("y", 732)
+                        div.append("text")
+                        .attr("x", 25)
+                        .attr("y", 40)
                         .text("entry 進站");
-                        svg1.append("circle")
+                        div.append("circle")
                         .attr("cx", 839)
                         .attr("cy", 728)
                         .attr("r", 5)
                         .attr("fill", "#5bc0de")
                         .style("opacity", 0.7);
-                        svg1.append("text")
+                        div.append("text")
                         .attr("x", 851)
                         .attr("y", 732)
                         .text("exit 出站");
                         
-                        svg1.selectAll(".legend")
+                        div.selectAll(".legend")
                         .data(legend)
                         .enter()
                         .append("circle")
@@ -242,7 +287,8 @@
                         .attr("fill", "#5bc0de")
                         .style("opacity", 0.7);
                         
-                        svg1.selectAll(".legendtext")
+                        
+                        div.selectAll(".legendtext")
                         .data(legend)
                         .enter()
                         .append("text")
