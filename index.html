@@ -302,7 +302,7 @@
                         var pauseButton = timediv.append("path")
                         .attr("class", "player")
                         .attr("id", "pause")
-                        .attr("d", "m42,47L42,63L57,63L57,47L52,47L52,63L47,63L47,47z")
+                        .attr("d", "m42,48L42,64L57,64L57,48L52,48L52,64L47,64L47,48z")
                         .attr("fill", "#6C6C6C")
                         .on("mouseover", function(){
                             d3.select(this)
@@ -317,7 +317,7 @@
                         var forwardButton = timediv.append("path")
                         .attr("class", "player")
                         .attr("id", "forward")
-                        .attr("d", "m10,47L20,55L20,47L30,55L20,63L20,55L10,63z")
+                        .attr("d", "m10,48L20,56L20,48L30,56L20,64L20,56L10,64z")
                         .attr("fill", "#6C6C6C")
                         .on("mouseover", function(){
                             d3.select(this)
@@ -332,7 +332,7 @@
                         var backwardButton = timediv.append("path")
                         .attr("class", "player")
                         .attr("id", "backward")
-                        .attr("d", "m90,47L80,55L80,47L70,55L80,63L80,55L90,63z")
+                        .attr("d", "m90,48L80,56L80,48L70,56L80,64L80,56L90,64z")
                         .attr("fill", "#6C6C6C")
                         .on("mouseover", function(){
                             d3.select(this)
@@ -350,7 +350,7 @@
                         
                         function clockRunner() {
                         
-                        if (i < 20) {
+                        if (i < 19) {
                             var h = i + 5;
                             }
                             else {
@@ -385,15 +385,21 @@
                             var playButton = timediv.append("path")
                             .attr("class", "player")
                             .attr("id", "play")
-                            .attr("d", "m44,47L55,53L55,47L58,47L58,63L55,63L55,58L44,63z")
+                            .attr("d", "M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z")
+                            .attr("transform", "translate(38,45)")
+                            //.attr("d", "m44,47L55,53L55,47L58,47L58,63L55,63L55,58L44,63z")
+                            .attr("stroke", "#6C6C6C")
+                            .attr("stroke-width", 1.1)
                             .attr("fill", "#6C6C6C")
                             .on("mouseover", function(){
                                 d3.select(this)
-                                .attr("fill", "#5bc0de");
+                                .attr("fill", "#5bc0de")
+                                .attr("stroke", "#5bc0de");
                             })
                             .on("mouseout", function(){
                                 d3.select(this)
-                                .attr("fill", "#6C6C6C");
+                                .attr("fill", "#6C6C6C")
+                                .attr("stroke", "#6C6C6C");
                             })
                             .on("click", restartTimer);
                         };
@@ -422,13 +428,17 @@
                         };
                         
                         function forwardTimer() {
-                            clockRunner();
+                            if (i < 22) {
+                                clockRunner();
+                            }
                         }
 
                         function backwardTimer() {
-                            i = i - 2;
-                            console.log(i);
-                            clockRunner();
+                            if (i > 0) {
+                                i = i - 2;
+                                console.log(i);
+                                clockRunner();
+                            }
                         }
                             function draw(h) {
                             
