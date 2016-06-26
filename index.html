@@ -104,6 +104,9 @@
                         
                         <script>
                         /* Set up Leaflet.js map */
+                        var northEast = L.latLng(25.3,121.8),
+                        southWest = L.latLng(24.9023253,121.26019),
+                        bounds = L.latLngBounds(southWest, northEast);
                         
                         var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
                         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
@@ -115,7 +118,8 @@
                         doubleClickZoom: false,
                         center: [25.0600789,121.5171921],
                         zoom: 12,
-                        zoomControl: false
+                        zoomControl: false,
+                        maxBounds: bounds
                         });
                         
                         map.addLayer(layer);
@@ -231,6 +235,18 @@
                         .attr("fill", "None")
                         .style("opacity", 1)
                         .attr("d", function(d) { return d3path(d.geoLineString); });
+                        
+                        map.on("viewreset", updateMap);
+                        updateMap();
+                        
+                        function updateMap() {
+                            linePath.attr("transform",
+                                function(d) {
+                                    d.x = map.latLngToLayerPoint(d.LatLng).x;
+                                    d.y = map.latLngToLayerPoint(d.LatLng).y;
+                                    return "translate("+d.x +","+d.y +")";
+                                }
+                            )};
                         
                         
                         }); //end of d3.csv("taipei.csv")
@@ -482,16 +498,13 @@
                             function(d) {
                             d.x = map.latLngToLayerPoint(d.LatLng).x;
                             d.y = map.latLngToLayerPoint(d.LatLng).y;
-                            return "translate("+
-                            map.latLngToLayerPoint(d.LatLng).x +","+
-                            map.latLngToLayerPoint(d.LatLng).y +")";
+                            return "translate("+d.x +","+d.y +")";
                             }
                             )};
                             
                             }// end of draw(h)
                             
                             }) // end of d3.csv()
-                        //Ira Winder <a href="http://cp.media.mit.edu/city-simulation/">Urban Intervention Simulation</a></br>
                             </script>
                             </body>
 </html>
